@@ -1,4 +1,6 @@
-simple webcam kit to take pictures at fixed interval in order to make a timelaspse
+#webcam
+
+Simple webcam kit to take pictures at fixed interval in order to make a timelaspse
 
 3 tools :
 - webcam.sh : script that takes pictures
