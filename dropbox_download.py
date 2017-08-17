@@ -49,7 +49,6 @@ if __name__ == '__main__':
         print("ERROR reading %s : %s" % (configFile, err))
         sys.exit(1)
 
-    
     log.debug("access token = [%s]" % accessToken)
     dbx  = dropbox.Dropbox(accessToken)
     user = dbx.users_get_current_account()
@@ -64,7 +63,7 @@ if __name__ == '__main__':
 
     # create local folder if missing
     if not os.path.exists(syncFolder):
-        log.debug("creating folder : %s" % syncFolder)
+        log.info("creating folder : %s" % syncFolder)
         os.makedirs(syncFolder)
 
     try:
@@ -81,7 +80,7 @@ if __name__ == '__main__':
             if os.path.isfile(remoteFilePath):
                 log.debug("skipping file     : %s" % remoteFilePath)
             else:
-                log.debug("downloading file  : %s" % remoteFilePath)
+                log.info("downloading file  : %s" % remoteFilePath)
                 res = dbx.files_download_to_file(remoteFilePath, entry.path_display)
 
     except dropbox.exceptions.ApiError as err:
