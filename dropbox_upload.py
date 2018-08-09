@@ -2,23 +2,27 @@
 
 import sys
 import logging
+import configparser
 import argparse
 import dropbox
 import os
 
+############################
+# configuration
+############################
+
+configFile="dropbox_upload.ini"
+
 # logging.basicConfig(format='%(asctime)-15s %(message)s')
 logging.basicConfig(format='%(message)s')
 log = logging.getLogger(__name__)
-
-# Get your app key and secret from the Dropbox developer website
-ACCESS_TOKEN = 'YOUR_DROPBOX_ACCESS_TOKEN'
-FOLDER       = 'capture'
 
 ############################
 # main
 ############################
 if __name__ == '__main__':
 
+    # parse args
     parser = argparse.ArgumentParser(description='sync folder with dropbox')
     parser.add_argument('-v', action='store_true', help="verbose mode")
     args = parser.parse_args()
@@ -27,14 +31,30 @@ if __name__ == '__main__':
     else:
         log.setLevel(logging.INFO)
 
-    dbx  = dropbox.Dropbox(ACCESS_TOKEN)
+    try :
+        # read config file
+        log.debug("reading config file : %s" % configFile)
+        config = configparser.ConfigParser()
+        config.read(configFile)
+
+        # read config
+        accessToken  = config['general']['accessToken']
+        syncFolder   = config['general']['syncFolder']
+
+    except Exception as err:
+        print("ERROR reading %s : %s" % (configFile, err))
+        sys.exit(1)
+
+    
+    log.debug("access token = [%s]" % accessToken)
+    dbx  = dropbox.Dropbox(accessToken)
     user = dbx.users_get_current_account()
     log.debug("user account = %s" % user.name.display_name)
 
-    log.debug("syncing folder %s" % FOLDER)
+    log.debug("syncing folder %s" % syncFolder)
 
     remoteFileList = []
-    remotePath = FOLDER
+    remotePath = syncFolder
 
     try:
         log.debug("liste remote folder : %s" % remotePath)
@@ -50,7 +70,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     os.chdir(os.path.dirname(sys.argv[0]))
-    localPath = FOLDER
+    localPath = syncFolder
 
     for localFileName in os.listdir(localPath):
         localFilePath = os.path.join(localPath, localFileName)
