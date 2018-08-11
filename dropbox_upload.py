@@ -22,6 +22,9 @@ log = logging.getLogger(__name__)
 ############################
 if __name__ == '__main__':
 
+    # get current dir
+    currentDir = os.path.dirname(sys.argv[0])
+
     # parse args
     parser = argparse.ArgumentParser(description='sync folder with dropbox')
     parser.add_argument('-v', action='store_true', help="verbose mode")
@@ -35,7 +38,8 @@ if __name__ == '__main__':
         # read config file
         log.debug("reading config file : %s" % configFile)
         config = configparser.ConfigParser()
-        config.read(configFile)
+        with open(os.path.join(currentDir, configFile)) as f:
+            config.read_file(f)
 
         # read config
         accessToken  = config['general']['accessToken']
@@ -69,7 +73,7 @@ if __name__ == '__main__':
         print('Folder listing failed for', remotePath, '-- assumed empty:', err)
         sys.exit(1)
 
-    os.chdir(os.path.dirname(sys.argv[0]))
+    os.chdir(currentDir)
     localPath = syncFolder
 
     for localFileName in os.listdir(localPath):
