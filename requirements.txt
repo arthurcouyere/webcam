@@ -1,4 +1,4 @@
 ephem==3.7.6.0
-requests==2.18.3
+requests>=2.20.0
 dateparser==0.6.0
 dropbox==8.0.0
